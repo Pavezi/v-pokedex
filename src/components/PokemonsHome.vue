@@ -4,7 +4,6 @@
 <input class="search-input" v-model="search" type="text" placeholder="Search for Pokemon" />
     <button class="search-button" @click="searchPokemon()">Search</button>
     </div>
-    
     <div>
       <div>
         <select v-model="selectedType" @change="filterByType">
@@ -285,7 +284,6 @@ export default defineComponent({
         await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
       }
     },
-
   },
 });
 </script>

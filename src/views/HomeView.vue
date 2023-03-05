@@ -25,6 +25,8 @@ export default defineComponent({
     return {
       pokemons: [] ,
       selectedPokemon: null as Pokemon | null,
+            pokemonsFiltered: [] as Pokemon[],
+
     };
   },
   computed: {
@@ -35,6 +37,7 @@ export default defineComponent({
   methods: {
     showPokemonStats(pokemon: Pokemon) {
       this.selectedPokemon = pokemon;
+      console.log(pokemon);
     },
     goBack() {
       this.selectedPokemon = null;
