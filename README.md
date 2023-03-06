@@ -1,4 +1,4 @@
-# v-todo
+# v-pokedex
 
 ## Project setup
 ```
