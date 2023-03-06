@@ -7,11 +7,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Pokemon from "../components/IPokemon";
+import Pokemon from "../interface/IPokemon";
 
 // Components
-import PokemonHome from "../components/PokemonsHome.vue";
-import PokemonStats from "../components/PokemonStats.vue";
+import PokemonHome from "./PokemonsHome.vue";
+import PokemonStats from "./PokemonStats.vue";
 
 export default defineComponent({
   name: "HomeView",

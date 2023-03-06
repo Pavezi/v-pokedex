@@ -129,8 +129,9 @@ select::-ms-expand {
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import Pokemon from "./IPokemon"
-import { elementTypes, ElementType, typeColors } from "./constants";
+import Pokemon from "../interface/IPokemon"
+import { elementTypes, typeColors } from "../components/constants";
+import debounce from "lodash/debounce";
 
 export default defineComponent({
   name: "PokemonHome",
@@ -166,8 +167,6 @@ export default defineComponent({
         for (const pokemon of data.results) {
           const pokemonDataResponse = await axios.get(pokemon.url);
           const pokemonData = pokemonDataResponse.data;
-          const statsResponse = await axios.get(pokemonData.stats[0].stat.url);
-          const statsData = statsResponse.data;
           const newPokemon: Pokemon = {
             name: pokemonData.name,
             image: pokemonData.sprites.front_default,
@@ -230,7 +229,6 @@ export default defineComponent({
     selectPokemon(pokemon: Pokemon) {
       this.$emit("pokemonSelected", pokemon);
     },
-
     async searchPokemon() {
       if (this.search) {
         try {
@@ -238,12 +236,10 @@ export default defineComponent({
             `https://pokeapi.co/api/v2/pokemon?limit=2000`
           );
           const data = response.data;
-      const filteredData = data.filter(
-        (pokemon: Pokemon) => pokemon.name.includes(this.search.toLowerCase())
-      );
-      this.pokemons = filteredData;
-          console.log(filteredData);
-
+          const filteredData = data.results.filter(
+            (pokemon: any) => pokemon.name.includes(this.search.toLowerCase())
+          );
+          this.pokemons = filteredData;
           this.next = false;
         } catch (error) {
           console.error(error);
@@ -253,5 +249,11 @@ export default defineComponent({
       }
     },
   },
+  watch: {
+    search: debounce(function (this: any) {
+      this.searchPokemon();
+    }, 500),
+  },
+
 });
 </script>

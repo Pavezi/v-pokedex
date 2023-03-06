@@ -82,8 +82,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import Pokemon from "./IPokemon";
-import { typeColors } from "./constants"
+import Pokemon from "../interface/IPokemon";
+import { typeColors } from "../components/constants"
 import {
   Chart as ChartJS,
   RadialLinearScale,

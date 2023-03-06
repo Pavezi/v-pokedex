@@ -1,6 +1,6 @@
 // pokemonUtils.ts
 import axios from "axios";
-import Pokemon from "./IPokemon";
+import Pokemon from "../interface/IPokemon";
 
 export async function loadPokemons(url: string): Promise<Pokemon[]> {
     const response = await axios.get(url);

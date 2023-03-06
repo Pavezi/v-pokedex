@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import PokemonStats from '../components/PokemonStats.vue'
+import PokemonStats from '../views/PokemonStats.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
