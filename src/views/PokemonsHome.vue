@@ -4,6 +4,7 @@
       <input class="search-input" v-model="search" type="text" placeholder="Search for Pokemon" />
       <button class="search-button" @click="searchPokemon()">Search</button>
     </div>
+
     <div>
       <div>
         <select v-model="selectedType" @change="filterByType">
@@ -17,14 +18,18 @@
     </div>
     <v-container fluid>
       <v-row class="pokemon-row">
-        <v-card class="pokemon-card" v-for="(pokemon, index) in pokemons" :key="index" :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }" @click="selectPokemon(pokemon)">
+        <v-card class="pokemon-card" v-for="(pokemon, index) in filteredPokemons" :key="index" :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }" @click="selectPokemon(pokemon)">
           <div class="pokemon-image">
             <img :src="pokemon.image" :alt="pokemon.name" />
           </div>
           <div class="pokemon-details">
-            <h3>{{ pokemon.name }}</h3>
+            <h3>{{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)  }}</h3>
             <ul>
-              <li v-for="type in pokemon.types" :key="type">{{ type }}</li>
+              <li v-for="type in pokemon.types" :key="type" class="type-item">
+                <img :src="getIcon(type)" alt="Type icon" />
+                {{ type }}
+              </li>
+
             </ul>
             <p>Height: {{ pokemon.height }}</p>
             <p>Weight: {{ pokemon.weight }}</p>
@@ -32,15 +37,16 @@
           </div>
         </v-card>
       </v-row>
-    </v-container>
-    <div>
-      <div v-if="next" class="Next20">
-        <button class="search-button" @click="loadNext()">Next</button>
-      </div>
+      <div class="buttons">
       <div class="GoBack">
-        <button class="search-button" @click="goBack()">Go Back</button>
+        <button class="goBack_next-button" @click="goBack()">Go Back</button>
+      </div>
+      <div v-if="next" class="Next20">
+        <button class="goBack_next-button" @click="loadNext()">Next</button>
       </div>
     </div>
+    </v-container>
+    
   </div>
 </template>
 
@@ -49,7 +55,15 @@
   color: #222222;
   background-color: #f5f5f5;
 }
-
+.type-item {
+  list-style: none;
+}
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+}
 button.search-button {
   background-color: #42b983;
   color: white;
@@ -67,7 +81,20 @@ button.filter-button {
   padding: 10px 20px;
   font-size: 14px;
 }
-
+.goBack_next-button{
+  background-color: #42b983;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+.GoBack {
+  margin: 1.5% 2.5%;
+  justify-content: center;
+  align-self: botown;
+  color: #2c5044;
+  font-weight: bold;}
 .Next20 {
   margin: 1.5% 2.5%;
   justify-content: center;
@@ -130,8 +157,7 @@ select::-ms-expand {
 import { defineComponent } from "vue";
 import axios from "axios";
 import Pokemon from "../interface/IPokemon"
-import { elementTypes, typeColors } from "../components/constants";
-import debounce from "lodash/debounce";
+import { elementTypes, typeColors, elementIcon } from "../components/constants";
 
 export default defineComponent({
   name: "PokemonHome",
@@ -148,6 +174,16 @@ export default defineComponent({
       next: false,
       elementTypes,
     };
+  },
+  computed: {
+    filteredPokemons(): Pokemon[] {
+      if (!this.search) {
+        return this.pokemons;
+      }
+      return this.pokemons.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(this.search.toLowerCase())
+      );
+    },
   },
   async mounted() {
     await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
@@ -196,6 +232,7 @@ export default defineComponent({
         this.url = data.response
         this.nextUrl = data.next;
         this.next = !!data.next;
+        this.previousUrl = data.previous;
       } catch (error) {
         console.error(error);
       }
@@ -211,12 +248,16 @@ export default defineComponent({
       console.log(this.previousUrl);
       if (this.previousUrl) {
         await this.loadPokemons(this.previousUrl);
+      }else{
+        await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
       }
     },
     getTypeColor(type: string): string {
       return typeColors[type];
     },
-
+    getIcon(type: string): string {
+      return elementIcon[type];
+    },
     async filterByType() {
       if (this.selectedType) {
         const filteredUrl = `https://pokeapi.co/api/v2/pokemon?limit=20&offset=0&type=${this.selectedType}`;
@@ -229,17 +270,38 @@ export default defineComponent({
     selectPokemon(pokemon: Pokemon) {
       this.$emit("pokemonSelected", pokemon);
     },
+
     async searchPokemon() {
       if (this.search) {
         try {
           const response = await axios.get(
-            `https://pokeapi.co/api/v2/pokemon?limit=2000`
+            `https://pokeapi.co/api/v2/pokemon/${this.search}`
           );
           const data = response.data;
-          const filteredData = data.results.filter(
-            (pokemon: any) => pokemon.name.includes(this.search.toLowerCase())
-          );
-          this.pokemons = filteredData;
+          const newPokemon: Pokemon = {
+            name: data.name,
+            image: data.sprites.front_default,
+            types: data.types.map(
+              (type: { type: { name: string } }) => type.type.name
+            ),
+            height: data.height,
+            weight: data.weight,
+            sex:
+              data.gender_rate === -1
+                ? "Genderless"
+                : data.gender_rate >= 4
+                  ? "Female"
+                  : "Male",
+            stats: {
+              hp: data.stats[0].base_stat,
+              attack: data.stats[1].base_stat,
+              defense: data.stats[2].base_stat,
+              specialAttack: data.stats[3].base_stat,
+              specialDefense: data.stats[4].base_stat,
+              speed: data.stats[5].base_stat,
+            }
+          };
+          this.pokemons = [newPokemon];
           this.next = false;
         } catch (error) {
           console.error(error);
@@ -248,12 +310,7 @@ export default defineComponent({
         await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
       }
     },
-  },
-  watch: {
-    search: debounce(function (this: any) {
-      this.searchPokemon();
-    }, 500),
-  },
 
+  },
 });
 </script>

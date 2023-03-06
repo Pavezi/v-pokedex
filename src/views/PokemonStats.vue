@@ -1,7 +1,13 @@
 <template>
   <div id="page">
     <div :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }" id="container">
-      <div class="image-container">
+      <div class="name-container">
+      <h1 class="pokemon-name">{{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}</h1>
+      <div class="element_icon">
+        <img v-for="type in pokemon.types" :key="type" :src="getIcon(type)" alt="Type icon" />
+      </div>
+      </div>
+      <div class="image-container" :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }">
         <img id="pokemon-image" :src="pokemon.image" :alt="pokemon.name" />
       </div>
       <div class="content-container">
@@ -32,7 +38,6 @@
   display: flex;
   justify-content: center;
 }
-
 #container {
   display: flex;
   flex-direction: column;
@@ -49,6 +54,23 @@
   height: 150px;
 }
 
+.type-item {
+  list-style: none;
+}
+.name-container {
+  display: flex;
+  align-items: center;
+}
+.type-item {
+  list-style: none;
+}
+.pokemon-name {
+  list-style: none;
+}
+
+.element_icon {
+  align-self: end;
+}
 .status-container {
   display: flex;
   justify-content: flex-start;
@@ -77,13 +99,13 @@
   padding: 10px;
   height: fit-content;
 }
-
 </style>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import Pokemon from "../interface/IPokemon";
-import { typeColors } from "../components/constants"
+import { typeColors, elementIconGreat } from "../components/constants"
+
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -116,7 +138,11 @@ export default defineComponent({
     getTypeColor(type: string): string {
       return typeColors[type];
     },
+    getIcon(type: string): string {
+      return elementIconGreat[type];
+    },
   },
+
   components: {
     Radar,
   },
@@ -180,7 +206,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-      console.log(`prop`, this.pokemon);
+    console.log(`prop`, this.pokemon);
   },
 });
 </script>

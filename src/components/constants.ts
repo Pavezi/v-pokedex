@@ -39,6 +39,46 @@ export const elementTypes = [
     'fairy',
 ] as const;
 
-export type ElementType = typeof elementTypes[number];
+export const elementIcon: { [key: string]: string } = {
+    normal: 'http://www.rw-designer.com/icon-image/21168-16x16x32.png',
+    fire: 'http://www.rw-designer.com/icon-image/21169-16x16x32.png',
+    water: 'http://www.rw-designer.com/icon-image/21170-16x16x32.png',
+    electric: 'http://www.rw-designer.com/icon-image/21179-16x16x32.png',
+    grass: 'http://www.rw-designer.com/icon-image/21171-16x16x32.png',
+    ice: 'http://www.rw-designer.com/icon-image/21176-16x16x32.png',
+    fighting: 'http://www.rw-designer.com/icon-image/21181-16x16x32.png',
+    poison: 'http://www.rw-designer.com/icon-image/21183-16x16x32.png',
+    ground: 'http://www.rw-designer.com/icon-image/21172-16x16x32.png',
+    flying: 'http://www.rw-designer.com/icon-image/21175-16x16x32.png',
+    psychic: 'http://www.rw-designer.com/icon-image/21185-16x16x32.png',
+    bug: 'http://www.rw-designer.com/icon-image/21178-16x16x32.png',
+    rock: 'http://www.rw-designer.com/icon-image/21174-16x16x32.png',
+    ghost: 'http://www.rw-designer.com/icon-image/21187-16x16x32.png',
+    dragon: 'http://www.rw-designer.com/icon-image/21189-16x16x32.png',
+    dark: 'http://www.rw-designer.com/icon-image/21184-16x16x32.png',
+    steel: 'http://www.rw-designer.com/icon-image/21180-16x16x32.png',
+    fairy: 'http://www.rw-designer.com/icon-image/21188-16x16x32.png',
+}
 
+export const elementIconGreat: { [key: string]: string } = {
+    normal: 'http://www.rw-designer.com/icon-image/21168-32x32x32.png',
+    fire: 'http://www.rw-designer.com/icon-image/21169-32x32x32.png',
+    water: 'http://www.rw-designer.com/icon-image/21170-32x32x32.png',
+    electric: 'http://www.rw-designer.com/icon-image/21179-32x32x32.png',
+    grass: 'http://www.rw-designer.com/icon-image/21171-32x32x32.png',
+    ice: 'http://www.rw-designer.com/icon-image/21176-32x32x32.png',
+    fighting: 'http://www.rw-designer.com/icon-image/21181-32x32x32.png',
+    poison: 'http://www.rw-designer.com/icon-image/21183-32x32x32.png',
+    ground: 'http://www.rw-designer.com/icon-image/21172-32x32x32.png',
+    flying: 'http://www.rw-designer.com/icon-image/21175-32x32x32.png',
+    psychic: 'http://www.rw-designer.com/icon-image/21185-32x32x32.png',
+    bug: 'http://www.rw-designer.com/icon-image/21178-32x32x32.png',
+    rock: 'http://www.rw-designer.com/icon-image/21174-32x32x32.png',
+    ghost: 'http://www.rw-designer.com/icon-image/21187-32x32x32.png',
+    dragon: 'http://www.rw-designer.com/icon-image/21189-32x32x32.png',
+    dark: 'http://www.rw-designer.com/icon-image/21184-32x32x32.png',
+    steel: 'http://www.rw-designer.com/icon-image/21180-32x32x32.png',
+    fairy: 'http://www.rw-designer.com/icon-image/21188-32x32x32.png',
+}
+export type ElementType = typeof elementTypes[number];
 
