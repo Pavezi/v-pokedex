@@ -1,8 +1,8 @@
 <template>
   <div class="page">
     <div class="header">
-<input class="search-input" v-model="search" type="text" placeholder="Search for Pokemon" />
-    <button class="search-button" @click="searchPokemon()">Search</button>
+      <input class="search-input" v-model="search" type="text" placeholder="Search for Pokemon" />
+      <button class="search-button" @click="searchPokemon()">Search</button>
     </div>
     <div>
       <div>
@@ -17,7 +17,7 @@
     </div>
     <v-container fluid>
       <v-row class="pokemon-row">
-        <v-card class="pokemon-card" v-for="(pokemon, index) in filteredPokemons" :key="index" :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }" @click="selectPokemon(pokemon)">
+        <v-card class="pokemon-card" v-for="(pokemon, index) in pokemons" :key="index" :style="{ backgroundColor: getTypeColor(pokemon.types[0]) }" @click="selectPokemon(pokemon)">
           <div class="pokemon-image">
             <img :src="pokemon.image" :alt="pokemon.name" />
           </div>
@@ -140,23 +140,13 @@ export default defineComponent({
       pokemons: [] as Pokemon[],
       selectedType: "",
       selectedPokemon: null as Pokemon | null,
-      search:"",
+      search: "",
       url: "",
       nextUrl: "",
       previousUrl: "",
       next: false,
       elementTypes,
     };
-  },
-  computed: {
-    filteredPokemons(): Pokemon[] {
-      if (!this.search) {
-        return this.pokemons;
-      }
-      return this.pokemons.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(this.search.toLowerCase())
-      );
-    },
   },
   async mounted() {
     await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
@@ -245,37 +235,15 @@ export default defineComponent({
       if (this.search) {
         try {
           const response = await axios.get(
-            `https://pokeapi.co/api/v2/pokemon/${this.search}`
+            `https://pokeapi.co/api/v2/pokemon?limit=2000`
           );
           const data = response.data;
+      const filteredData = data.filter(
+        (pokemon: Pokemon) => pokemon.name.includes(this.search.toLowerCase())
+      );
+      this.pokemons = filteredData;
+          console.log(filteredData);
 
-          const statsResponse = await axios.get(data.stats[0].stat.url);
-          const statsData = statsResponse.data;
-
-          const newPokemon: Pokemon = {
-            name: data.name,
-            image: data.sprites.front_default,
-            types: data.types.map(
-              (type: { type: { name: string } }) => type.type.name
-            ),
-            height: data.height,
-            weight: data.weight,
-            sex:
-              data.gender_rate === -1
-                ? "Genderless"
-                : data.gender_rate >= 4
-                  ? "Female"
-                  : "Male",
-            stats: {
-              hp: data.stats[0].base_stat,
-              attack: data.stats[1].base_stat,
-              defense: data.stats[2].base_stat,
-              specialAttack: data.stats[3].base_stat,
-              specialDefense: data.stats[4].base_stat,
-              speed: data.stats[5].base_stat,
-            }
-          };
-          this.pokemons = [newPokemon];
           this.next = false;
         } catch (error) {
           console.error(error);
