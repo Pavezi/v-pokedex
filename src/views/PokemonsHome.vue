@@ -1,5 +1,6 @@
 <template>
   <div class="page">
+    <Loader :is-loading="isLoading" />
     <div class="header">
       <input class="search-input" v-model="search" type="text" placeholder="Search for Pokemon" />
       <button class="search-button" @click="searchPokemon()">Search</button>
@@ -38,15 +39,14 @@
         </v-card>
       </v-row>
       <div class="buttons">
-      <div class="GoBack">
-        <button class="goBack_next-button" @click="goBack()">Go Back</button>
+        <div class="GoBack">
+          <button class="goBack_next-button" @click="goBack()">Go Back</button>
+        </div>
+        <div v-if="next" class="Next20">
+          <button class="goBack_next-button" @click="loadNext()">Next</button>
+        </div>
       </div>
-      <div v-if="next" class="Next20">
-        <button class="goBack_next-button" @click="loadNext()">Next</button>
-      </div>
-    </div>
     </v-container>
-    
   </div>
 </template>
 
@@ -81,7 +81,7 @@ button.filter-button {
   padding: 10px 20px;
   font-size: 14px;
 }
-.goBack_next-button{
+.goBack_next-button {
   background-color: #42b983;
   color: white;
   border-radius: 20px;
@@ -94,7 +94,8 @@ button.filter-button {
   justify-content: center;
   align-self: botown;
   color: #2c5044;
-  font-weight: bold;}
+  font-weight: bold;
+}
 .Next20 {
   margin: 1.5% 2.5%;
   justify-content: center;
@@ -158,12 +159,16 @@ import { defineComponent } from "vue";
 import axios from "axios";
 import Pokemon from "../interface/IPokemon"
 import { elementTypes, typeColors, elementIcon } from "../components/constants";
+import Loader from "@/components/showLoader.vue";
 
 export default defineComponent({
   name: "PokemonHome",
-
+  components: {
+    Loader,
+  },
   data() {
     return {
+      isLoading: true,
       pokemons: [] as Pokemon[],
       selectedType: "",
       selectedPokemon: null as Pokemon | null,
@@ -187,6 +192,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
+    this.isLoading = false;
   },
   methods: {
     handlePokemonSelected(pokemon: Pokemon) {
@@ -248,7 +254,7 @@ export default defineComponent({
       console.log(this.previousUrl);
       if (this.previousUrl) {
         await this.loadPokemons(this.previousUrl);
-      }else{
+      } else {
         await this.loadPokemons("https://pokeapi.co/api/v2/pokemon?limit=20");
       }
     },
